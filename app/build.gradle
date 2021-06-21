@@ -1,0 +1,123 @@
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-parcelize")
+    id("dagger.hilt.android.plugin")
+    id("org.jetbrains.dokka")
+}
+
+android {
+    compileSdk AppConfig.compileSdkVersion
+    buildToolsVersion AppConfig.buildToolsVersion
+
+    defaultConfig {
+        applicationId AppConfig.applicationId
+        minSdk AppConfig.minSdkVersion
+        targetSdk AppConfig.targetSdkVersion
+        versionCode AppConfig.versionCode
+        versionName AppConfig.versionName
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+        freeCompilerArgs += [
+                "-Xallow-jvm-ir-dependencies",
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+        ]
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion Versions.compose
+    }
+
+}
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+}
+
+kapt {
+    correctErrorTypes true
+}
+
+dependencies {
+
+    // support libraries
+    implementation(Support.material)
+    implementation(Support.constraintLayout)
+    implementation(Support.appCompat)
+
+    // jetpack libraries
+    implementation(Jetpack.room)
+    implementation(Jetpack.roomExt)
+    kapt(Jetpack.roomCompiler)
+    implementation(Jetpack.dataStore)
+    implementation(Jetpack.lifecycleViewModel)
+    implementation(Jetpack.lifecycleLiveData)
+    implementation(Jetpack.workManger)
+    implementation(Jetpack.navigation)
+    implementation(Jetpack.navigationUi)
+    implementation(Jetpack.transition)
+    implementation(Jetpack.paging)
+
+    // kotlin
+    implementation(Dependencies.kotlin)
+    implementation(Dependencies.ktx)
+
+    // coroutine
+    implementation(Dependencies.coroutineCore)
+    implementation(Dependencies.coroutineAndroid)
+
+    // multidex
+    implementation(Dependencies.multidex)
+
+    // network
+    implementation(Dependencies.retrofit)
+    implementation(Dependencies.gsonConverter)
+    implementation(Dependencies.okhttp)
+    implementation(Dependencies.gson)
+
+    // glide
+    implementation(Dependencies.glide)
+
+    // timber and logger
+    implementation(Dependencies.timber)
+    implementation(Dependencies.orhanobut)
+
+    // hilt
+    implementation(Dependencies.hilt)
+    kapt(Dependencies.hiltCompiler)
+
+    // testing
+    androidTestImplementation(Testing.androidTestHilt)
+    androidTestImplementation(Testing.androidTestCompose)
+    androidTestImplementation(Testing.androidTestRoom)
+    androidTestImplementation(Testing.androidTestWorkManager)
+
+}
